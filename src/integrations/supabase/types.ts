@@ -291,7 +291,7 @@ export type Database = {
           created_by?: string | null
           credit_hold?: boolean
           credit_limit?: number
-          customer_code: string
+          customer_code?: string
           customer_type_id: string
           email?: string | null
           id?: string
