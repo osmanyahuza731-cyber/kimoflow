@@ -139,7 +139,7 @@ export function MetricTile({
 }: {
   label: string;
   value: string;
-  hint?: string;
+  hint?: string | undefined;
   tone?: ToneKey;
   to?: string;
   search?: Record<string, string>;

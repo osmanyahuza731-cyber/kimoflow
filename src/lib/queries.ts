@@ -41,8 +41,9 @@ export const pricingRulesQuery = queryOptions({
 export const companyQuery = queryOptions({
   queryKey: ["settings", "company"],
   queryFn: async () => {
-    const row = await unwrap(supabase.from("settings").select("*").eq("key", "company").maybeSingle());
-    return (row?.value ?? {}) as Record<string, string>;
+    const { data, error } = await supabase.from("settings").select("*").eq("key", "company").maybeSingle();
+    if (error) throw error;
+    return ((data?.value as Record<string, string> | undefined) ?? {}) as Record<string, string>;
   },
 });
 
