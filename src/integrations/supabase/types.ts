@@ -1797,6 +1797,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      change_job_status: {
+        Args: { _job_id: string; _reason?: string; _to: string }
+        Returns: Json
+      }
+      confirm_payment: { Args: { _payment_id: string }; Returns: string }
       has_any_role: {
         Args: {
           _roles: Database["public"]["Enums"]["app_role"][]
@@ -1814,6 +1819,58 @@ export type Database = {
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       next_document_number: { Args: { _kind: string }; Returns: string }
+      record_expense: {
+        Args: {
+          _account: string
+          _amount: number
+          _category: string
+          _date: string
+          _method: string
+          _notes: string
+          _purpose: string
+          _receipt: string
+        }
+        Returns: string
+      }
+      record_payment: {
+        Args: {
+          _account: string
+          _amount: number
+          _cheque: string
+          _job_id: string
+          _method: string
+          _notes: string
+          _proof: string
+          _reference: string
+          _sender_phone: string
+        }
+        Returns: string
+      }
+      refresh_job_payment: { Args: { _job_id: string }; Returns: undefined }
+      reverse_payment: {
+        Args: { _payment_id: string; _reason: string }
+        Returns: undefined
+      }
+      set_user_role: {
+        Args: {
+          _grant: boolean
+          _role: Database["public"]["Enums"]["app_role"]
+          _user: string
+        }
+        Returns: undefined
+      }
+      stock_move: {
+        Args: {
+          _item: string
+          _qty: number
+          _reason: string
+          _reference: string
+          _to_store: string
+          _type: string
+          _unit_cost: number
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role:
