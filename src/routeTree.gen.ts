@@ -13,12 +13,14 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedPaymentsRouteImport } from './routes/_authenticated/payments'
 import { Route as AuthenticatedRegistrationsRouteImport } from './routes/_authenticated/registrations'
 import { Route as AuthenticatedCustomersIndexRouteImport } from './routes/_authenticated/customers.index'
 import { Route as AuthenticatedCustomersIdRouteImport } from './routes/_authenticated/customers.$id'
 import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authenticated/jobs.index'
 import { Route as AuthenticatedJobsIdRouteImport } from './routes/_authenticated/jobs.$id'
 import { Route as AuthenticatedJobsNewRouteImport } from './routes/_authenticated/jobs.new'
+import { Route as AuthenticatedReceiptsIdRouteImport } from './routes/_authenticated/receipts.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -37,6 +39,11 @@ const AuthRoute = AuthRouteImport.update({
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPaymentsRoute = AuthenticatedPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedRegistrationsRoute =
@@ -72,15 +79,22 @@ const AuthenticatedJobsNewRoute = AuthenticatedJobsNewRouteImport.update({
   path: '/jobs/new',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedReceiptsIdRoute = AuthenticatedReceiptsIdRouteImport.update({
+  id: '/receipts/$id',
+  path: '/receipts/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/payments': typeof AuthenticatedPaymentsRoute
   '/registrations': typeof AuthenticatedRegistrationsRoute
   '/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/jobs/new': typeof AuthenticatedJobsNewRoute
+  '/receipts/$id': typeof AuthenticatedReceiptsIdRoute
   '/customers/': typeof AuthenticatedCustomersIndexRoute
   '/jobs/': typeof AuthenticatedJobsIndexRoute
 }
@@ -88,10 +102,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/payments': typeof AuthenticatedPaymentsRoute
   '/registrations': typeof AuthenticatedRegistrationsRoute
   '/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/jobs/new': typeof AuthenticatedJobsNewRoute
+  '/receipts/$id': typeof AuthenticatedReceiptsIdRoute
   '/customers': typeof AuthenticatedCustomersIndexRoute
   '/jobs': typeof AuthenticatedJobsIndexRoute
 }
@@ -101,10 +117,12 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/payments': typeof AuthenticatedPaymentsRoute
   '/_authenticated/registrations': typeof AuthenticatedRegistrationsRoute
   '/_authenticated/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/_authenticated/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/_authenticated/jobs/new': typeof AuthenticatedJobsNewRoute
+  '/_authenticated/receipts/$id': typeof AuthenticatedReceiptsIdRoute
   '/_authenticated/customers/': typeof AuthenticatedCustomersIndexRoute
   '/_authenticated/jobs/': typeof AuthenticatedJobsIndexRoute
 }
@@ -114,10 +132,12 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/dashboard'
+    | '/payments'
     | '/registrations'
     | '/customers/$id'
     | '/jobs/$id'
     | '/jobs/new'
+    | '/receipts/$id'
     | '/customers/'
     | '/jobs/'
   fileRoutesByTo: FileRoutesByTo
@@ -125,10 +145,12 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/dashboard'
+    | '/payments'
     | '/registrations'
     | '/customers/$id'
     | '/jobs/$id'
     | '/jobs/new'
+    | '/receipts/$id'
     | '/customers'
     | '/jobs'
   id:
@@ -137,10 +159,12 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/dashboard'
+    | '/_authenticated/payments'
     | '/_authenticated/registrations'
     | '/_authenticated/customers/$id'
     | '/_authenticated/jobs/$id'
     | '/_authenticated/jobs/new'
+    | '/_authenticated/receipts/$id'
     | '/_authenticated/customers/'
     | '/_authenticated/jobs/'
   fileRoutesById: FileRoutesById
@@ -179,6 +203,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/payments': {
+      id: '/_authenticated/payments'
+      path: '/payments'
+      fullPath: '/payments'
+      preLoaderRoute: typeof AuthenticatedPaymentsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/registrations': {
@@ -223,25 +254,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedJobsNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/receipts/$id': {
+      id: '/_authenticated/receipts/$id'
+      path: '/receipts/$id'
+      fullPath: '/receipts/$id'
+      preLoaderRoute: typeof AuthenticatedReceiptsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedPaymentsRoute: typeof AuthenticatedPaymentsRoute
   AuthenticatedRegistrationsRoute: typeof AuthenticatedRegistrationsRoute
   AuthenticatedCustomersIdRoute: typeof AuthenticatedCustomersIdRoute
   AuthenticatedJobsIdRoute: typeof AuthenticatedJobsIdRoute
   AuthenticatedJobsNewRoute: typeof AuthenticatedJobsNewRoute
+  AuthenticatedReceiptsIdRoute: typeof AuthenticatedReceiptsIdRoute
   AuthenticatedCustomersIndexRoute: typeof AuthenticatedCustomersIndexRoute
   AuthenticatedJobsIndexRoute: typeof AuthenticatedJobsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedPaymentsRoute: AuthenticatedPaymentsRoute,
   AuthenticatedRegistrationsRoute: AuthenticatedRegistrationsRoute,
   AuthenticatedCustomersIdRoute: AuthenticatedCustomersIdRoute,
   AuthenticatedJobsIdRoute: AuthenticatedJobsIdRoute,
   AuthenticatedJobsNewRoute: AuthenticatedJobsNewRoute,
+  AuthenticatedReceiptsIdRoute: AuthenticatedReceiptsIdRoute,
   AuthenticatedCustomersIndexRoute: AuthenticatedCustomersIndexRoute,
   AuthenticatedJobsIndexRoute: AuthenticatedJobsIndexRoute,
 }
