@@ -13,9 +13,12 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAssetsRouteImport } from './routes/_authenticated/assets'
+import { Route as AuthenticatedConfigsRouteImport } from './routes/_authenticated/configs'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedLedgerRouteImport } from './routes/_authenticated/ledger'
 import { Route as AuthenticatedPaymentsRouteImport } from './routes/_authenticated/payments'
 import { Route as AuthenticatedRegistrationsRouteImport } from './routes/_authenticated/registrations'
+import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedCustomersIndexRouteImport } from './routes/_authenticated/customers.index'
 import { Route as AuthenticatedCustomersIdRouteImport } from './routes/_authenticated/customers.$id'
 import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authenticated/jobs.index'
@@ -42,9 +45,19 @@ const AuthenticatedAssetsRoute = AuthenticatedAssetsRouteImport.update({
   path: '/assets',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedConfigsRoute = AuthenticatedConfigsRouteImport.update({
+  id: '/configs',
+  path: '/configs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLedgerRoute = AuthenticatedLedgerRouteImport.update({
+  id: '/ledger',
+  path: '/ledger',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPaymentsRoute = AuthenticatedPaymentsRouteImport.update({
@@ -58,6 +71,11 @@ const AuthenticatedRegistrationsRoute =
     path: '/registrations',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedCustomersIndexRoute =
   AuthenticatedCustomersIndexRouteImport.update({
     id: '/customers/',
@@ -95,9 +113,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/assets': typeof AuthenticatedAssetsRoute
+  '/configs': typeof AuthenticatedConfigsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/ledger': typeof AuthenticatedLedgerRoute
   '/payments': typeof AuthenticatedPaymentsRoute
   '/registrations': typeof AuthenticatedRegistrationsRoute
+  '/reports': typeof AuthenticatedReportsRoute
   '/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/jobs/new': typeof AuthenticatedJobsNewRoute
@@ -109,9 +130,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/assets': typeof AuthenticatedAssetsRoute
+  '/configs': typeof AuthenticatedConfigsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/ledger': typeof AuthenticatedLedgerRoute
   '/payments': typeof AuthenticatedPaymentsRoute
   '/registrations': typeof AuthenticatedRegistrationsRoute
+  '/reports': typeof AuthenticatedReportsRoute
   '/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/jobs/new': typeof AuthenticatedJobsNewRoute
@@ -125,9 +149,12 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/assets': typeof AuthenticatedAssetsRoute
+  '/_authenticated/configs': typeof AuthenticatedConfigsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/ledger': typeof AuthenticatedLedgerRoute
   '/_authenticated/payments': typeof AuthenticatedPaymentsRoute
   '/_authenticated/registrations': typeof AuthenticatedRegistrationsRoute
+  '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/_authenticated/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/_authenticated/jobs/new': typeof AuthenticatedJobsNewRoute
@@ -141,9 +168,12 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/assets'
+    | '/configs'
     | '/dashboard'
+    | '/ledger'
     | '/payments'
     | '/registrations'
+    | '/reports'
     | '/customers/$id'
     | '/jobs/$id'
     | '/jobs/new'
@@ -155,9 +185,12 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/assets'
+    | '/configs'
     | '/dashboard'
+    | '/ledger'
     | '/payments'
     | '/registrations'
+    | '/reports'
     | '/customers/$id'
     | '/jobs/$id'
     | '/jobs/new'
@@ -170,9 +203,12 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/assets'
+    | '/_authenticated/configs'
     | '/_authenticated/dashboard'
+    | '/_authenticated/ledger'
     | '/_authenticated/payments'
     | '/_authenticated/registrations'
+    | '/_authenticated/reports'
     | '/_authenticated/customers/$id'
     | '/_authenticated/jobs/$id'
     | '/_authenticated/jobs/new'
@@ -217,11 +253,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAssetsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/configs': {
+      id: '/_authenticated/configs'
+      path: '/configs'
+      fullPath: '/configs'
+      preLoaderRoute: typeof AuthenticatedConfigsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/ledger': {
+      id: '/_authenticated/ledger'
+      path: '/ledger'
+      fullPath: '/ledger'
+      preLoaderRoute: typeof AuthenticatedLedgerRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/payments': {
@@ -236,6 +286,13 @@ declare module '@tanstack/react-router' {
       path: '/registrations'
       fullPath: '/registrations'
       preLoaderRoute: typeof AuthenticatedRegistrationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/reports': {
+      id: '/_authenticated/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof AuthenticatedReportsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/customers/': {
@@ -285,9 +342,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAssetsRoute: typeof AuthenticatedAssetsRoute
+  AuthenticatedConfigsRoute: typeof AuthenticatedConfigsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedLedgerRoute: typeof AuthenticatedLedgerRoute
   AuthenticatedPaymentsRoute: typeof AuthenticatedPaymentsRoute
   AuthenticatedRegistrationsRoute: typeof AuthenticatedRegistrationsRoute
+  AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedCustomersIdRoute: typeof AuthenticatedCustomersIdRoute
   AuthenticatedJobsIdRoute: typeof AuthenticatedJobsIdRoute
   AuthenticatedJobsNewRoute: typeof AuthenticatedJobsNewRoute
@@ -298,9 +358,12 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAssetsRoute: AuthenticatedAssetsRoute,
+  AuthenticatedConfigsRoute: AuthenticatedConfigsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedLedgerRoute: AuthenticatedLedgerRoute,
   AuthenticatedPaymentsRoute: AuthenticatedPaymentsRoute,
   AuthenticatedRegistrationsRoute: AuthenticatedRegistrationsRoute,
+  AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedCustomersIdRoute: AuthenticatedCustomersIdRoute,
   AuthenticatedJobsIdRoute: AuthenticatedJobsIdRoute,
   AuthenticatedJobsNewRoute: AuthenticatedJobsNewRoute,
