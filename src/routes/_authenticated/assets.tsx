@@ -181,7 +181,7 @@ function NewItem() {
 }
 
 function Movements() {
-  const q = useQuery({ queryKey: ["inventory_transactions"], queryFn: () => unwrap(supabase.from("inventory_transactions").select("*, inventory_items(name, unit, item_code), jobs(job_number), profiles:created_by(full_name)").order("created_at", { ascending: false }).limit(200)) });
+  const q = useQuery({ queryKey: ["inventory_transactions"], queryFn: () => unwrap(supabase.from("inventory_transactions").select("*, inventory_items(name, unit, item_code), jobs(job_number)").order("created_at", { ascending: false }).limit(200)) });
   if (q.isLoading) return <LoadingRow />;
   return (
     <Panel bodyClassName="p-0" actions={<Btn size="sm" variant="secondary" onClick={() => downloadCsv("stock-movements.csv", (q.data ?? []).map((t) => ({ date: t.created_at, item: t.inventory_items?.name, type: t.transaction_type, qty: t.quantity, balance: t.balance_after, job: t.jobs?.job_number, reason: t.reason })))}>Export CSV</Btn>} title="Recent movements">
@@ -189,7 +189,7 @@ function Movements() {
         <TableShell>
           <thead><tr><Th>Date</Th><Th>Item</Th><Th>Type</Th><Th className="text-right">Qty</Th><Th className="text-right">Balance</Th><Th>Job / ref</Th><Th>By</Th><Th>Reason</Th></tr></thead>
           <tbody>{q.data.map((t) => (
-            <tr key={t.id}><Td>{dateTime(t.created_at)}</Td><Td>{t.inventory_items?.name}</Td><Td>{titleCase(t.transaction_type)}</Td><Td className="tabular text-right">{number(t.quantity, 2)} {t.inventory_items?.unit}</Td><Td className="tabular text-right">{number(t.balance_after, 2)}</Td><Td>{t.jobs?.job_number ?? t.reference ?? "—"}</Td><Td>{t.profiles?.full_name ?? "—"}</Td><Td className="text-xs">{t.reason}</Td></tr>))}</tbody>
+            <tr key={t.id}><Td>{dateTime(t.created_at)}</Td><Td>{t.inventory_items?.name}</Td><Td>{titleCase(t.transaction_type)}</Td><Td className="tabular text-right">{number(t.quantity, 2)} {t.inventory_items?.unit}</Td><Td className="tabular text-right">{number(t.balance_after, 2)}</Td><Td>{t.jobs?.job_number ?? t.reference ?? "—"}</Td><Td>{"—"}</Td><Td className="text-xs">{t.reason}</Td></tr>))}</tbody>
         </TableShell>
       )}
     </Panel>
@@ -229,7 +229,7 @@ function MachineDialog({ m, canManage, onClose, onSaved }: { m: Row; canManage: 
     e.preventDefault();
     const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
     const r = Number(f.reading);
-    if (m.current_counter != null && r < Number(m.current_counter)) return toast.error("Counter can't go backwards");
+    if (m.current_counter != null && r < Number(m.current_counter)) { toast.error("Counter cannot go backwards"); return; }
     setBusy(true);
     try {
       const { data: u } = await supabase.auth.getUser();
