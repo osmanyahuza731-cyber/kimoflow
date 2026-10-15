@@ -53,12 +53,12 @@ export async function uploadFile(recordType: string, recordId: string, file: Fil
 
 export async function openFile(path: string) {
   const { data, error } = await supabase.storage.from("documents").createSignedUrl(path, 120);
-  if (error || !data) return toast.error("Could not open file");
+  if (error || !data) { toast.error("Could not open file"); return; }
   window.open(data.signedUrl, "_blank", "noopener");
 }
 
 export function downloadCsv(filename: string, rows: Record<string, unknown>[]) {
-  if (!rows.length) return toast.error("Nothing to export");
+  if (!rows.length) { toast.error("Nothing to export"); return; }
   const headers = Object.keys(rows[0]!);
   const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
   const csv = [headers.join(","), ...rows.map((r) => headers.map((h) => esc(r[h])).join(","))].join("\n");

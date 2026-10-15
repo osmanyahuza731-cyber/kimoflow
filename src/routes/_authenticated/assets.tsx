@@ -229,7 +229,7 @@ function MachineDialog({ m, canManage, onClose, onSaved }: { m: Row; canManage: 
     e.preventDefault();
     const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
     const r = Number(f.reading);
-    if (m.current_counter != null && r < Number(m.current_counter)) return toast.error("Counter can't go backwards");
+    if (m.current_counter != null && r < Number(m.current_counter)) { toast.error("Counter cannot go backwards"); return; }
     setBusy(true);
     try {
       const { data: u } = await supabase.auth.getUser();
