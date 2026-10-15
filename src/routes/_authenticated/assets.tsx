@@ -189,7 +189,7 @@ function Movements() {
         <TableShell>
           <thead><tr><Th>Date</Th><Th>Item</Th><Th>Type</Th><Th className="text-right">Qty</Th><Th className="text-right">Balance</Th><Th>Job / ref</Th><Th>By</Th><Th>Reason</Th></tr></thead>
           <tbody>{q.data.map((t) => (
-            <tr key={t.id}><Td>{dateTime(t.created_at)}</Td><Td>{t.inventory_items?.name}</Td><Td>{titleCase(t.transaction_type)}</Td><Td className="tabular text-right">{number(t.quantity, 2)} {t.inventory_items?.unit}</Td><Td className="tabular text-right">{number(t.balance_after, 2)}</Td><Td>{t.jobs?.job_number ?? t.reference ?? "—"}</Td><Td>{t.profiles?.full_name ?? "—"}</Td><Td className="text-xs">{t.reason}</Td></tr>))}</tbody>
+            <tr key={t.id}><Td>{dateTime(t.created_at)}</Td><Td>{t.inventory_items?.name}</Td><Td>{titleCase(t.transaction_type)}</Td><Td className="tabular text-right">{number(t.quantity, 2)} {t.inventory_items?.unit}</Td><Td className="tabular text-right">{number(t.balance_after, 2)}</Td><Td>{t.jobs?.job_number ?? t.reference ?? "—"}</Td><Td>{"—"}</Td><Td className="text-xs">{t.reason}</Td></tr>))}</tbody>
         </TableShell>
       )}
     </Panel>
