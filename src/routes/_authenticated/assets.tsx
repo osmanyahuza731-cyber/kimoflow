@@ -181,7 +181,7 @@ function NewItem() {
 }
 
 function Movements() {
-  const q = useQuery({ queryKey: ["inventory_transactions"], queryFn: () => unwrap(supabase.from("inventory_transactions").select("*, inventory_items(name, unit, item_code), jobs(job_number), profiles:created_by(full_name)").order("created_at", { ascending: false }).limit(200)) });
+  const q = useQuery({ queryKey: ["inventory_transactions"], queryFn: () => unwrap(supabase.from("inventory_transactions").select("*, inventory_items(name, unit, item_code), jobs(job_number)").order("created_at", { ascending: false }).limit(200)) });
   if (q.isLoading) return <LoadingRow />;
   return (
     <Panel bodyClassName="p-0" actions={<Btn size="sm" variant="secondary" onClick={() => downloadCsv("stock-movements.csv", (q.data ?? []).map((t) => ({ date: t.created_at, item: t.inventory_items?.name, type: t.transaction_type, qty: t.quantity, balance: t.balance_after, job: t.jobs?.job_number, reason: t.reason })))}>Export CSV</Btn>} title="Recent movements">
