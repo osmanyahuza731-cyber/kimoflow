@@ -175,7 +175,7 @@ function JobPage() {
       {tab === "history" ? (
         <Panel title="Status history">
           <ol className="grid gap-3 text-sm">{history.map((h) => (
-            <li key={h.id} className="border-l-2 border-accent pl-3"><p className="font-medium">{h.from_status ? `${JOB_STATUS_LABELS[h.from_status as JobStatus] ?? h.from_status} → ` : ""}{JOB_STATUS_LABELS[h.to_status as JobStatus] ?? h.to_status}</p><p className="text-xs text-muted-foreground">{dateTime(h.created_at)} · {h.profiles?.full_name ?? "System"}{h.reason ? ` · ${h.reason}` : ""}</p></li>))}</ol>
+            <li key={h.id} className="border-l-2 border-accent pl-3"><p className="font-medium">{h.from_status ? `${JOB_STATUS_LABELS[h.from_status as JobStatus] ?? h.from_status} → ` : ""}{JOB_STATUS_LABELS[h.to_status as JobStatus] ?? h.to_status}</p><p className="text-xs text-muted-foreground">{dateTime(h.created_at)} · {h.user_name ?? "System"}{h.reason ? ` · ${h.reason}` : ""}</p></li>))}</ol>
         </Panel>
       ) : null}
     </>
@@ -203,9 +203,9 @@ function Costing({ job, totalCost, profit, canEdit, onSaved }: { job: Row; total
     e.preventDefault();
     const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
     setBusy(true);
-    const { error } = await supabase.from("jobs").update({ labour_cost: Number(f.labour_cost), machine_cost: Number(f.machine_cost), outsourcing_cost: Number(f.outsourcing_cost), other_cost: Number(f.other_cost) }).eq("id", job.id);
+    const { error } = await supabase.from("jobs").update({ labour_cost: Number(f.labour_cost), machine_cost: Number(f.machine_cost), outsourcing_cost: Number(f.outsourcing_cost), other_cost: Number(f.other_cost) }).eq("id", job.id as string);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Costs updated");
     onSaved();
   }

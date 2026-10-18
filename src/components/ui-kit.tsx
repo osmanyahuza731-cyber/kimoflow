@@ -20,7 +20,7 @@ export function StatusBadge({
   className,
 }: {
   label: string;
-  tone?: ToneKey;
+  tone?: ToneKey | undefined;
   className?: string;
 }) {
   return (
@@ -67,7 +67,7 @@ export function Panel({
   bodyClassName,
 }: {
   title?: string;
-  description?: string;
+  description?: string | undefined;
   actions?: ReactNode;
   children: ReactNode;
   className?: string;

@@ -2,10 +2,12 @@ import { queryOptions } from "@tanstack/react-query";
 
 import { supabase } from "@/integrations/supabase/client";
 
-async function unwrap<T>(p: PromiseLike<{ data: T | null; error: unknown }>): Promise<T> {
-  const { data, error } = await p;
+type UnwrapData<P> = P extends PromiseLike<{ data: infer D }> ? NonNullable<D> : never;
+
+async function unwrap<P extends PromiseLike<{ data: unknown; error: unknown }>>(p: P): Promise<UnwrapData<P>> {
+  const { data, error } = await p as { data: unknown; error: unknown };
   if (error) throw error;
-  return data as T;
+  return data as UnwrapData<P>;
 }
 
 export const customerTypesQuery = queryOptions({

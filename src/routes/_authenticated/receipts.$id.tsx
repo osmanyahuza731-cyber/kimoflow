@@ -25,14 +25,17 @@ function Receipt() {
   const q = useQuery({
     queryKey: ["receipt", id],
     queryFn: async () => {
-      const p = await unwrap(supabase.from("payments").select("*, customers(name, business_name, phone), jobs(id, job_number, total), invoices(invoice_number), payment_accounts(name), confirmer:profiles!payments_confirmed_by_fkey(full_name)").eq("id", id).single());
-      const earlier = p.job_id ? await unwrap(supabase.from("payments").select("amount").eq("job_id", p.job_id).eq("status", "confirmed").lt("confirmed_at", p.confirmed_at ?? p.paid_at)) : [];
-      return { p, before: earlier.reduce((s, x) => s + Number(x.amount), 0) };
+      const p = await unwrap(supabase.from("payments").select("*, customers(name, business_name, phone), jobs(id, job_number, total), invoices(invoice_number), payment_accounts(name)").eq("id", id).single());
+      const [earlier, confirmer] = await Promise.all([
+        p.job_id ? unwrap(supabase.from("payments").select("amount").eq("job_id", p.job_id).eq("status", "confirmed").lt("confirmed_at", p.confirmed_at ?? p.paid_at)) : Promise.resolve([]),
+        p.confirmed_by ? unwrap(supabase.from("profiles").select("full_name").eq("id", p.confirmed_by).maybeSingle()) : Promise.resolve(null),
+      ]);
+      return { p, before: earlier.reduce((s, x) => s + Number(x.amount), 0), confirmer: confirmer?.full_name ?? null };
     },
   });
   if (q.isLoading) return <LoadingRow />;
   if (q.error || !q.data) return <ErrorNote message="Receipt not found." />;
-  const { p, before } = q.data;
+  const { p, before, confirmer } = q.data;
   if (p.status !== "confirmed") return <ErrorNote message="Receipts are only issued for confirmed payments." />;
   const c = company.data ?? {};
   const total = Number(p.jobs?.total ?? 0);
@@ -61,7 +64,7 @@ function Receipt() {
           <dt className="text-muted-foreground">Previous balance</dt><dd className="tabular">{money(prevBal)}</dd>
           <dt className="font-semibold">Amount paid</dt><dd className="tabular font-semibold">{money(p.amount)}</dd>
           <dt className="text-muted-foreground">Remaining balance</dt><dd className="tabular">{money(remaining)}</dd>
-          <dt className="text-muted-foreground">Confirmed by</dt><dd>{p.confirmer?.full_name ?? "—"}</dd>
+          <dt className="text-muted-foreground">Confirmed by</dt><dd>{confirmer ?? "—"}</dd>
         </dl>
         <footer className="mt-4 border-t border-border pt-2 text-center text-xs text-muted-foreground">{c.receipt_footer || "Thank you for your business."}</footer>
       </article>

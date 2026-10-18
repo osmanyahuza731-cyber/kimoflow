@@ -86,7 +86,7 @@ function Crud({ table, queryKey, order, fields, extra }: { table: string; queryK
   const [edit, setEdit] = useState<Row | null | "new">(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const t = () => supabase.from(table as any) as any;
-  const q = useQuery({ queryKey, queryFn: () => unwrap<Row[]>(t().select("*").order(order)) });
+  const q = useQuery({ queryKey, queryFn: () => unwrap(t().select("*").order(order)) });
   async function save(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const data = readForm(e, fields);
@@ -231,7 +231,7 @@ function Users() {
   const [staff, setStaff] = useState<Row | null>(null);
   async function toggle(uid: string, role: AppRole, grant: boolean) {
     const { error } = await supabase.rpc("set_user_role", { _user: uid, _role: role, _grant: grant });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(grant ? `${ROLE_LABELS[role]} granted` : `${ROLE_LABELS[role]} removed`);
     qc.invalidateQueries({ queryKey: ["users-roles"] });
   }
@@ -285,14 +285,24 @@ function StaffProfile({ p, self, onClose }: { p: Row; self: boolean; onClose: ()
 }
 
 function Audit() {
-  const q = useQuery({ queryKey: ["audit"], queryFn: () => unwrap(supabase.from("audit_logs").select("*, profiles:user_id(full_name)").order("created_at", { ascending: false }).limit(200)) });
+  const q = useQuery({
+    queryKey: ["audit"],
+    queryFn: async () => {
+      const [logs, profiles] = await Promise.all([
+        unwrap(supabase.from("audit_logs").select("*").order("created_at", { ascending: false }).limit(200)),
+        unwrap(supabase.from("profiles").select("id, full_name")),
+      ]);
+      const names = new Map(profiles.map((p) => [p.id, p.full_name]));
+      return logs.map((a) => ({ ...a, user_name: a.user_id ? (names.get(a.user_id) ?? null) : null }));
+    },
+  });
   if (q.isLoading) return <LoadingRow />;
   return (
     <Panel bodyClassName="p-0" title="Audit log" description="Append-only. Nobody — including administrators — can edit or delete these entries.">
       <TableShell>
         <thead><tr><Th>When</Th><Th>User</Th><Th>Action</Th><Th>Reason</Th><Th>Change</Th></tr></thead>
         <tbody>{q.data?.map((a) => (
-          <tr key={a.id}><Td className="whitespace-nowrap">{dateTime(a.created_at)}</Td><Td>{a.profiles?.full_name ?? "System"}</Td><Td>{a.action}</Td><Td className="text-xs">{a.reason ?? ""}</Td><Td className="max-w-md truncate text-xs text-muted-foreground" title={JSON.stringify(a.after_value)}>{a.after_value ? JSON.stringify(a.after_value).slice(0, 120) : ""}</Td></tr>))}</tbody>
+          <tr key={a.id}><Td className="whitespace-nowrap">{dateTime(a.created_at)}</Td><Td>{a.user_name ?? "System"}</Td><Td>{a.action}</Td><Td className="text-xs">{a.reason ?? ""}</Td><Td className="max-w-md truncate text-xs text-muted-foreground" title={JSON.stringify(a.after_value)}>{a.after_value ? JSON.stringify(a.after_value).slice(0, 120) : ""}</Td></tr>))}</tbody>
       </TableShell>
     </Panel>
   );

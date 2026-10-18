@@ -51,13 +51,18 @@ function Jobs() {
     queryKey: ["jobs", term, status, cat, staff, pay, from, to, page],
     placeholderData: keepPreviousData,
     queryFn: async () => {
+      const t = term.trim().replace(/[%,()]/g, "");
+      let custIds: string[] = [];
+      if (t) {
+        const { data: cs } = await supabase.from("customers").select("id").or(`name.ilike.%${t}%,business_name.ilike.%${t}%,phone.ilike.%${t}%`).limit(100);
+        custIds = (cs ?? []).map((c) => c.id);
+      }
       let s = supabase
         .from("jobs")
         .select("id, job_number, title, status, payment_status, priority, due_date, total, amount_paid, created_at, customers!inner(name, business_name, phone), categories(name), profiles:assigned_staff_id(full_name)", { count: "exact" })
         .order("created_at", { ascending: false })
         .range(page * PAGE, page * PAGE + PAGE - 1);
-      const t = term.trim().replace(/[%,()]/g, "");
-      if (t) s = s.or(`job_number.ilike.%${t}%,title.ilike.%${t}%,name.ilike.%${t}%,phone.ilike.%${t}%`, { referencedTable: "customers" });
+      if (t) s = s.or(`job_number.ilike.%${t}%,title.ilike.%${t}%${custIds.length ? `,customer_id.in.(${custIds.join(",")})` : ""}`);
       if (status) s = s.eq("status", status);
       if (cat) s = s.eq("category_id", cat);
       if (staff) s = s.eq("assigned_staff_id", staff);
