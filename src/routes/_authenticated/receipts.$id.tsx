@@ -35,7 +35,7 @@ function Receipt() {
   });
   if (q.isLoading) return <LoadingRow />;
   if (q.error || !q.data) return <ErrorNote message="Receipt not found." />;
-  const { p, before } = q.data;
+  const { p, before, confirmer } = q.data;
   if (p.status !== "confirmed") return <ErrorNote message="Receipts are only issued for confirmed payments." />;
   const c = company.data ?? {};
   const total = Number(p.jobs?.total ?? 0);
