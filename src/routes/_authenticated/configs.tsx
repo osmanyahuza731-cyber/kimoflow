@@ -86,7 +86,7 @@ function Crud({ table, queryKey, order, fields, extra }: { table: string; queryK
   const [edit, setEdit] = useState<Row | null | "new">(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const t = () => supabase.from(table as any) as any;
-  const q = useQuery({ queryKey, queryFn: () => unwrap<Row[]>(t().select("*").order(order)) });
+  const q = useQuery({ queryKey, queryFn: () => unwrap(t().select("*").order(order)) });
   async function save(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const data = readForm(e, fields);
