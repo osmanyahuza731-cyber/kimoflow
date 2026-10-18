@@ -175,7 +175,7 @@ function JobPage() {
       {tab === "history" ? (
         <Panel title="Status history">
           <ol className="grid gap-3 text-sm">{history.map((h) => (
-            <li key={h.id} className="border-l-2 border-accent pl-3"><p className="font-medium">{h.from_status ? `${JOB_STATUS_LABELS[h.from_status as JobStatus] ?? h.from_status} → ` : ""}{JOB_STATUS_LABELS[h.to_status as JobStatus] ?? h.to_status}</p><p className="text-xs text-muted-foreground">{dateTime(h.created_at)} · {h.profiles?.full_name ?? "System"}{h.reason ? ` · ${h.reason}` : ""}</p></li>))}</ol>
+            <li key={h.id} className="border-l-2 border-accent pl-3"><p className="font-medium">{h.from_status ? `${JOB_STATUS_LABELS[h.from_status as JobStatus] ?? h.from_status} → ` : ""}{JOB_STATUS_LABELS[h.to_status as JobStatus] ?? h.to_status}</p><p className="text-xs text-muted-foreground">{dateTime(h.created_at)} · {h.user_name ?? "System"}{h.reason ? ` · ${h.reason}` : ""}</p></li>))}</ol>
         </Panel>
       ) : null}
     </>

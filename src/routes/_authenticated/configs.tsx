@@ -302,7 +302,7 @@ function Audit() {
       <TableShell>
         <thead><tr><Th>When</Th><Th>User</Th><Th>Action</Th><Th>Reason</Th><Th>Change</Th></tr></thead>
         <tbody>{q.data?.map((a) => (
-          <tr key={a.id}><Td className="whitespace-nowrap">{dateTime(a.created_at)}</Td><Td>{a.profiles?.full_name ?? "System"}</Td><Td>{a.action}</Td><Td className="text-xs">{a.reason ?? ""}</Td><Td className="max-w-md truncate text-xs text-muted-foreground" title={JSON.stringify(a.after_value)}>{a.after_value ? JSON.stringify(a.after_value).slice(0, 120) : ""}</Td></tr>))}</tbody>
+          <tr key={a.id}><Td className="whitespace-nowrap">{dateTime(a.created_at)}</Td><Td>{a.user_name ?? "System"}</Td><Td>{a.action}</Td><Td className="text-xs">{a.reason ?? ""}</Td><Td className="max-w-md truncate text-xs text-muted-foreground" title={JSON.stringify(a.after_value)}>{a.after_value ? JSON.stringify(a.after_value).slice(0, 120) : ""}</Td></tr>))}</tbody>
       </TableShell>
     </Panel>
   );
