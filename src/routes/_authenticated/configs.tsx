@@ -285,7 +285,17 @@ function StaffProfile({ p, self, onClose }: { p: Row; self: boolean; onClose: ()
 }
 
 function Audit() {
-  const q = useQuery({ queryKey: ["audit"], queryFn: () => unwrap(supabase.from("audit_logs").select("*, profiles:user_id(full_name)").order("created_at", { ascending: false }).limit(200)) });
+  const q = useQuery({
+    queryKey: ["audit"],
+    queryFn: async () => {
+      const [logs, profiles] = await Promise.all([
+        unwrap(supabase.from("audit_logs").select("*").order("created_at", { ascending: false }).limit(200)),
+        unwrap(supabase.from("profiles").select("id, full_name")),
+      ]);
+      const names = new Map(profiles.map((p) => [p.id, p.full_name]));
+      return logs.map((a) => ({ ...a, user_name: a.user_id ? (names.get(a.user_id) ?? null) : null }));
+    },
+  });
   if (q.isLoading) return <LoadingRow />;
   return (
     <Panel bodyClassName="p-0" title="Audit log" description="Append-only. Nobody — including administrators — can edit or delete these entries.">

@@ -205,7 +205,7 @@ function Costing({ job, totalCost, profit, canEdit, onSaved }: { job: Row; total
     setBusy(true);
     const { error } = await supabase.from("jobs").update({ labour_cost: Number(f.labour_cost), machine_cost: Number(f.machine_cost), outsourcing_cost: Number(f.outsourcing_cost), other_cost: Number(f.other_cost) }).eq("id", job.id as string);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Costs updated");
     onSaved();
   }
