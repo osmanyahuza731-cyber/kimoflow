@@ -25,9 +25,12 @@ function Receipt() {
   const q = useQuery({
     queryKey: ["receipt", id],
     queryFn: async () => {
-      const p = await unwrap(supabase.from("payments").select("*, customers(name, business_name, phone), jobs(id, job_number, total), invoices(invoice_number), payment_accounts(name), confirmer:profiles!payments_confirmed_by_fkey(full_name)").eq("id", id).single());
-      const earlier = p.job_id ? await unwrap(supabase.from("payments").select("amount").eq("job_id", p.job_id).eq("status", "confirmed").lt("confirmed_at", p.confirmed_at ?? p.paid_at)) : [];
-      return { p, before: earlier.reduce((s, x) => s + Number(x.amount), 0) };
+      const p = await unwrap(supabase.from("payments").select("*, customers(name, business_name, phone), jobs(id, job_number, total), invoices(invoice_number), payment_accounts(name)").eq("id", id).single());
+      const [earlier, confirmer] = await Promise.all([
+        p.job_id ? unwrap(supabase.from("payments").select("amount").eq("job_id", p.job_id).eq("status", "confirmed").lt("confirmed_at", p.confirmed_at ?? p.paid_at)) : Promise.resolve([]),
+        p.confirmed_by ? unwrap(supabase.from("profiles").select("full_name").eq("id", p.confirmed_by).maybeSingle()) : Promise.resolve(null),
+      ]);
+      return { p, before: earlier.reduce((s, x) => s + Number(x.amount), 0), confirmer: confirmer?.full_name ?? null };
     },
   });
   if (q.isLoading) return <LoadingRow />;
