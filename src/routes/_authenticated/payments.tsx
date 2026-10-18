@@ -91,7 +91,7 @@ function Collect({ canRecord }: { canRecord: boolean }) {
     queryFn: async () => {
       let s = supabase.from("jobs").select("id, job_number, title, total, amount_paid, payment_status, status, customers!inner(name, business_name, phone)").neq("payment_status", "paid").neq("status", "cancelled").gt("total", 0).order("created_at", { ascending: false }).limit(50);
       const t = term.trim().replace(/[%,()]/g, "");
-      if (t) s = s.or(`name.ilike.%${t}%,phone.ilike.%${t}%,business_name.ilike.%${t}%`, { referencedTable: "customers" });
+      if (t) s = s.or(`title.ilike.%${t}%,job_number.ilike.%${t}%`);
       return unwrap(s);
     },
   });
