@@ -203,7 +203,7 @@ function Costing({ job, totalCost, profit, canEdit, onSaved }: { job: Row; total
     e.preventDefault();
     const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
     setBusy(true);
-    const { error } = await supabase.from("jobs").update({ labour_cost: Number(f.labour_cost), machine_cost: Number(f.machine_cost), outsourcing_cost: Number(f.outsourcing_cost), other_cost: Number(f.other_cost) }).eq("id", job.id);
+    const { error } = await supabase.from("jobs").update({ labour_cost: Number(f.labour_cost), machine_cost: Number(f.machine_cost), outsourcing_cost: Number(f.outsourcing_cost), other_cost: Number(f.other_cost) }).eq("id", job.id as string);
     setBusy(false);
     if (error) return toast.error(error.message);
     toast.success("Costs updated");

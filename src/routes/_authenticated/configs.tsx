@@ -231,7 +231,7 @@ function Users() {
   const [staff, setStaff] = useState<Row | null>(null);
   async function toggle(uid: string, role: AppRole, grant: boolean) {
     const { error } = await supabase.rpc("set_user_role", { _user: uid, _role: role, _grant: grant });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(grant ? `${ROLE_LABELS[role]} granted` : `${ROLE_LABELS[role]} removed`);
     qc.invalidateQueries({ queryKey: ["users-roles"] });
   }
