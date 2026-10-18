@@ -64,7 +64,7 @@ function Receipt() {
           <dt className="text-muted-foreground">Previous balance</dt><dd className="tabular">{money(prevBal)}</dd>
           <dt className="font-semibold">Amount paid</dt><dd className="tabular font-semibold">{money(p.amount)}</dd>
           <dt className="text-muted-foreground">Remaining balance</dt><dd className="tabular">{money(remaining)}</dd>
-          <dt className="text-muted-foreground">Confirmed by</dt><dd>{p.confirmer?.full_name ?? "—"}</dd>
+          <dt className="text-muted-foreground">Confirmed by</dt><dd>{confirmer ?? "—"}</dd>
         </dl>
         <footer className="mt-4 border-t border-border pt-2 text-center text-xs text-muted-foreground">{c.receipt_footer || "Thank you for your business."}</footer>
       </article>
