@@ -158,6 +158,7 @@ function RegistrationForm({ kind }: { kind: Kind }) {
         "Customer registered",
       );
       qc.invalidateQueries({ queryKey: ["customers"] });
+      if (!row) throw new Error("Registration returned no record.");
       navigate({ to: "/customers/$id", params: { id: row.id } });
     } catch {
       /* toast shown */

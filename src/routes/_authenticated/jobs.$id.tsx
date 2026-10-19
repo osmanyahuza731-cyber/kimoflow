@@ -48,7 +48,10 @@ function JobPage() {
         unwrap(supabase.from("attachments").select("*").eq("record_type", "job").eq("record_id", id)),
         canMoney ? unwrap(supabase.from("payments").select("*").eq("job_id", id).order("paid_at", { ascending: false })) : Promise.resolve([]),
       ]);
-      return { job, items, mats, history, files, payments };
+      const changerIds = [...new Set(history.map((h) => h.changed_by).filter(Boolean))] as string[];
+      const changers = changerIds.length ? await unwrap(supabase.from("profiles").select("id, full_name").in("id", changerIds)) : [];
+      const names = new Map(changers.map((c) => [c.id, c.full_name]));
+      return { job, items, mats, history: history.map((h) => ({ ...h, user_name: h.changed_by ? (names.get(h.changed_by) ?? null) : null })), files, payments };
     },
   });
   const refresh = () => qc.invalidateQueries({ queryKey: ["job", id] });

@@ -61,7 +61,7 @@ function Reports() {
   let table: { title: string; cols: string[]; rows: (string | number)[][] } = { title: "", cols: [], rows: [] };
   if (d) {
     if (tab === "sales") {
-      const bySvc = group(live.flatMap((j) => (j.job_items ?? []).map((i: Row) => ({ ...i, j }))), (r) => r.services?.name, (r) => Number(r.line_total));
+      const bySvc = group(live.flatMap((j) => ((j.job_items ?? []) as Row[]).map((i) => ({ ...i, j }))), (r) => r.services?.name, (r) => Number(r.line_total));
       table = { title: "Sales by service", cols: ["Service", "Lines", "Sales"], rows: bySvc.map((r) => [r.key, r.count, money(r.total)]) };
     } else if (tab === "jobs") {
       const bySt = group(d.jobs, (j) => JOB_STATUS_LABELS[j.status as JobStatus] ?? j.status, (j) => Number(j.total));
