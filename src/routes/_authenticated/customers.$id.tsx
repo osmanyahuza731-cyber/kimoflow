@@ -182,7 +182,7 @@ function Profile({ c, canEdit, canCredit, onChange }: { c: Row; canEdit: boolean
     const patch: Row = { name: f.name, business_name: f.business_name || null, phone: f.phone, alt_phone: f.alt_phone || null, email: f.email || null, address: f.address || null, location: f.location || null, status: f.status };
     if (canCredit) { patch.credit_limit = Number(f.credit_limit || 0); patch.credit_hold = f.credit_hold === "on"; }
     setBusy(true);
-    try { await run(() => supabase.from("customers").update(patch).eq("id", c.id), "Customer updated"); onChange(); } catch { /* shown */ } finally { setBusy(false); }
+    try { await run(() => supabase.from("customers").update(patch as never).eq("id", c.id), "Customer updated"); onChange(); } catch { /* shown */ } finally { setBusy(false); }
   }
   return (
     <Panel title="Profile">
