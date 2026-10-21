@@ -22,6 +22,7 @@ import { ROLE_LABELS, type Permission } from "@/lib/access";
 import { initials } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { LoadingRow } from "@/components/ui-kit";
+import { NotificationBell } from "@/components/notification-bell";
 
 type NavItem = { to: string; label: string; icon: typeof Users; perm?: Permission };
 
@@ -99,6 +100,7 @@ export function AppShell() {
             {user.roles.map((r) => ROLE_LABELS[r]).join(", ") || "No role assigned"}
           </p>
         </div>
+        <NotificationBell />
         <button
           onClick={signOut}
           className="rounded-sm p-2 text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
@@ -143,6 +145,7 @@ export function AppShell() {
             <Menu className="size-5" />
           </button>
           <span className="font-display text-sm font-semibold tracking-wider">KIMO GRAPHYX</span>
+          <span className="ml-auto"><NotificationBell /></span>
         </header>
         <main className="mx-auto max-w-[1400px] px-4 py-5 sm:px-6 lg:py-7">
           {loading ? <LoadingRow label="Loading your workspace…" /> : <Outlet />}
