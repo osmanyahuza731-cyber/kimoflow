@@ -9,7 +9,7 @@ import { unwrap } from "@/lib/queries";
 import { ACCEPT, errMsg, openFile, run, uploadFile } from "@/lib/actions";
 import { money, shortDate, titleCase } from "@/lib/format";
 import { JOB_STATUS_LABELS, JOB_STATUS_TONE, PAYMENT_STATUS_TONE, type JobStatus } from "@/lib/workflow";
-import { Btn, Field, Input, Tabs, Textarea } from "@/components/forms";
+import { Btn, Field, Input, Select, Tabs, Textarea } from "@/components/forms";
 import { EmptyState, ErrorNote, LoadingRow, MetricTile, PageHeader, Panel, StatusBadge, TableShell, Td, Th } from "@/components/ui-kit";
 
 export const Route = createFileRoute("/_authenticated/customers/$id")({
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/_authenticated/customers/$id")({
   component: CustomerPage,
 });
 
-type Tab = "jobs" | "payments" | "statement" | "files" | "profile";
+type Tab = "jobs" | "payments" | "statement" | "files" | "messages" | "profile";
 
 function CustomerPage() {
   const { id } = Route.useParams();
@@ -36,19 +36,20 @@ function CustomerPage() {
   const q = useQuery({
     queryKey: ["customer", id],
     queryFn: async () => {
-      const [c, jobs, payments, files] = await Promise.all([
+      const [c, jobs, payments, files, messages] = await Promise.all([
         unwrap(supabase.from("customers").select("*, customer_types(name)").eq("id", id).single()),
         unwrap(supabase.from("jobs").select("id, job_number, title, status, payment_status, total, amount_paid, due_date, created_at").eq("customer_id", id).order("created_at", { ascending: false })),
         canMoney ? unwrap(supabase.from("payments").select("id, receipt_number, amount, method, status, paid_at, reference, jobs(job_number)").eq("customer_id", id).order("paid_at", { ascending: false })) : Promise.resolve([]),
         unwrap(supabase.from("attachments").select("*").eq("record_type", "customer").eq("record_id", id).order("created_at", { ascending: false })),
+        unwrap(supabase.from("customer_messages").select("*").eq("customer_id", id).order("created_at", { ascending: false }).limit(50)),
       ]);
-      return { c, jobs, payments, files };
+      return { c, jobs, payments, files, messages };
     },
   });
 
   if (q.isLoading) return <LoadingRow />;
   if (q.error || !q.data) return <ErrorNote message="Customer not found or you don't have access." />;
-  const { c, jobs, payments, files } = q.data;
+  const { c, jobs, payments, files, messages } = q.data;
   const live = jobs.filter((j) => j.status !== "cancelled");
   const billed = live.reduce((s, j) => s + Number(j.total), 0);
   const paid = live.reduce((s, j) => s + Number(j.amount_paid), 0);
@@ -82,6 +83,7 @@ function CustomerPage() {
           { value: "jobs", label: "Jobs" },
           ...(canMoney ? [{ value: "payments" as Tab, label: "Payments" }, { value: "statement" as Tab, label: "Statement" }] : []),
           { value: "files", label: "Files & notes" },
+          { value: "messages", label: "Messages" },
           { value: "profile", label: "Profile" },
         ]}
       />
@@ -123,6 +125,7 @@ function CustomerPage() {
       ) : null}
       {tab === "statement" ? <Statement customer={c} jobs={live} payments={payments.filter((p) => p.status === "confirmed")} /> : null}
       {tab === "files" ? <Files id={id} files={files} notes={c.notes} canEdit={!!user?.can("customers.manage")} onChange={() => qc.invalidateQueries({ queryKey: ["customer", id] })} /> : null}
+      {tab === "messages" ? <Messages customer={c} messages={messages} canSend={!!user?.can("customers.manage")} onChange={() => qc.invalidateQueries({ queryKey: ["customer", id] })} /> : null}
       {tab === "profile" ? <Profile c={c} canEdit={!!user?.can("customers.manage")} canCredit={!!user?.isAdmin} onChange={() => qc.invalidateQueries({ queryKey: ["customer", id] })} /> : null}
     </>
   );
@@ -145,6 +148,88 @@ function Statement({ customer, jobs, payments }: { customer: Row; jobs: Row[]; p
           <tr key={i}><Td>{shortDate(l.date)}</Td><Td>{l.ref}</Td><Td>{l.desc}</Td><Td className="tabular text-right">{l.debit ? money(l.debit) : ""}</Td><Td className="tabular text-right">{l.credit ? money(l.credit) : ""}</Td><Td className="tabular text-right font-medium">{money(bal)}</Td></tr>); })}</tbody>
       </TableShell>
     </Panel>
+  );
+}
+
+const MESSAGE_TEMPLATES: Record<string, { label: string; body: (c: Row) => string }> = {
+  custom: { label: "Custom message", body: () => "" },
+  job_ready: { label: "Job ready for collection", body: (c) => `Dear ${c.name}, your job at KIMO GRAPHYX is ready for collection. Kindly pass by our office or contact us for delivery arrangements. Thank you.` },
+  payment_received: { label: "Payment confirmation", body: (c) => `Dear ${c.name}, we confirm receipt of your payment to KIMO GRAPHYX. Thank you for your business.` },
+  balance_reminder: { label: "Outstanding balance reminder", body: (c) => `Dear ${c.name}, this is a friendly reminder of the outstanding balance on your account with KIMO GRAPHYX. Kindly settle at your earliest convenience. Thank you.` },
+  quotation_ready: { label: "Quotation ready", body: (c) => `Dear ${c.name}, your quotation from KIMO GRAPHYX is ready. Please contact us to review and approve it. Thank you.` },
+};
+
+function Messages({ customer, messages, canSend, onChange }: { customer: Row; messages: Row[]; canSend: boolean; onChange: () => void }) {
+  const [template, setTemplate] = useState("custom");
+  const [channel, setChannel] = useState("sms");
+  const [body, setBody] = useState("");
+  const [busy, setBusy] = useState(false);
+  const effective = body || (template !== "custom" ? (MESSAGE_TEMPLATES[template]?.body(customer) ?? "") : "");
+
+  async function queue() {
+    if (!effective.trim()) { toast.error("Write or select a message first."); return; }
+    setBusy(true);
+    try {
+      await run(
+        () => supabase.from("customer_messages").insert({
+          customer_id: customer.id,
+          channel,
+          template: template === "custom" ? null : template,
+          body: effective,
+          status: "queued",
+          provider_response: "No SMS/WhatsApp provider is configured. This message is queued only — it has not been sent.",
+        }),
+        "Message queued (not sent — no provider configured)",
+      );
+      setBody(""); setTemplate("custom");
+      onChange();
+    } catch { /* shown */ } finally { setBusy(false); }
+  }
+
+  return (
+    <div className="grid gap-4 lg:grid-cols-2">
+      <Panel title="Prepare a message" description="Messages are queued in the system. Nothing is actually sent until an SMS/WhatsApp provider is connected.">
+        {canSend ? (
+          <div className="grid gap-4">
+            <Field label="Template">
+              <Select value={template} onChange={(e) => { setTemplate(e.target.value); setBody(""); }}>
+                {Object.entries(MESSAGE_TEMPLATES).map(([k, t]) => <option key={k} value={k}>{t.label}</option>)}
+              </Select>
+            </Field>
+            <Field label="Channel">
+              <Select value={channel} onChange={(e) => setChannel(e.target.value)}>
+                <option value="sms">SMS</option>
+                <option value="whatsapp">WhatsApp</option>
+                <option value="email">Email</option>
+              </Select>
+            </Field>
+            <Field label="Message" required>
+              <Textarea rows={5} value={effective} onChange={(e) => setBody(e.target.value)} placeholder="Type a custom message…" />
+            </Field>
+            <p className="text-xs text-muted-foreground">Recipient: {customer.name} · {customer.phone} · prefers {titleCase(customer.preferred_contact)}</p>
+            <div><Btn onClick={queue} loading={busy}>Queue message</Btn></div>
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">You don't have permission to prepare customer messages.</p>
+        )}
+      </Panel>
+      <Panel title="Message history" bodyClassName="p-0">
+        {!messages.length ? <EmptyState title="No messages yet" message="Prepared messages will be listed here with their status." /> : (
+          <ul className="divide-y divide-border text-sm">
+            {messages.map((m) => (
+              <li key={m.id} className="px-4 py-3">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-medium">{titleCase(m.channel)}{m.template ? ` · ${MESSAGE_TEMPLATES[m.template]?.label ?? m.template}` : ""}</span>
+                  <StatusBadge label={m.status === "queued" ? "Queued — not sent" : titleCase(m.status)} tone={m.status === "sent" ? "success" : "warning"} />
+                </div>
+                <p className="mt-1 text-muted-foreground">{m.body}</p>
+                <p className="mt-1 text-xs text-muted-foreground/70">{shortDate(m.created_at)}{m.provider_response ? ` · ${m.provider_response}` : ""}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Panel>
+    </div>
   );
 }
 

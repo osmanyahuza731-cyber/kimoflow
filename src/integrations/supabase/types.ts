@@ -1819,6 +1819,16 @@ export type Database = {
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       next_document_number: { Args: { _kind: string }; Returns: string }
+      notify_roles: {
+        Args: {
+          _body: string
+          _kind: string
+          _link: string
+          _roles: Database["public"]["Enums"]["app_role"][]
+          _title: string
+        }
+        Returns: undefined
+      }
       record_expense: {
         Args: {
           _account: string

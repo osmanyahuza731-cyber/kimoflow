@@ -25,6 +25,7 @@ import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authentica
 import { Route as AuthenticatedJobsIdRouteImport } from './routes/_authenticated/jobs.$id'
 import { Route as AuthenticatedJobsNewRouteImport } from './routes/_authenticated/jobs.new'
 import { Route as AuthenticatedReceiptsIdRouteImport } from './routes/_authenticated/receipts.$id'
+import { Route as ApiPublicWebsiteEnquiryRouteImport } from './routes/api/public/website-enquiry'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -108,6 +109,11 @@ const AuthenticatedReceiptsIdRoute = AuthenticatedReceiptsIdRouteImport.update({
   path: '/receipts/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicWebsiteEnquiryRoute = ApiPublicWebsiteEnquiryRouteImport.update({
+  id: '/api/public/website-enquiry',
+  path: '/api/public/website-enquiry',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/jobs/new': typeof AuthenticatedJobsNewRoute
   '/receipts/$id': typeof AuthenticatedReceiptsIdRoute
+  '/api/public/website-enquiry': typeof ApiPublicWebsiteEnquiryRoute
   '/customers/': typeof AuthenticatedCustomersIndexRoute
   '/jobs/': typeof AuthenticatedJobsIndexRoute
 }
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/jobs/new': typeof AuthenticatedJobsNewRoute
   '/receipts/$id': typeof AuthenticatedReceiptsIdRoute
+  '/api/public/website-enquiry': typeof ApiPublicWebsiteEnquiryRoute
   '/customers': typeof AuthenticatedCustomersIndexRoute
   '/jobs': typeof AuthenticatedJobsIndexRoute
 }
@@ -159,6 +167,7 @@ export interface FileRoutesById {
   '/_authenticated/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/_authenticated/jobs/new': typeof AuthenticatedJobsNewRoute
   '/_authenticated/receipts/$id': typeof AuthenticatedReceiptsIdRoute
+  '/api/public/website-enquiry': typeof ApiPublicWebsiteEnquiryRoute
   '/_authenticated/customers/': typeof AuthenticatedCustomersIndexRoute
   '/_authenticated/jobs/': typeof AuthenticatedJobsIndexRoute
 }
@@ -178,6 +187,7 @@ export interface FileRouteTypes {
     | '/jobs/$id'
     | '/jobs/new'
     | '/receipts/$id'
+    | '/api/public/website-enquiry'
     | '/customers/'
     | '/jobs/'
   fileRoutesByTo: FileRoutesByTo
@@ -195,6 +205,7 @@ export interface FileRouteTypes {
     | '/jobs/$id'
     | '/jobs/new'
     | '/receipts/$id'
+    | '/api/public/website-enquiry'
     | '/customers'
     | '/jobs'
   id:
@@ -213,6 +224,7 @@ export interface FileRouteTypes {
     | '/_authenticated/jobs/$id'
     | '/_authenticated/jobs/new'
     | '/_authenticated/receipts/$id'
+    | '/api/public/website-enquiry'
     | '/_authenticated/customers/'
     | '/_authenticated/jobs/'
   fileRoutesById: FileRoutesById
@@ -221,6 +233,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiPublicWebsiteEnquiryRoute: typeof ApiPublicWebsiteEnquiryRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -337,6 +350,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReceiptsIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/website-enquiry': {
+      id: '/api/public/website-enquiry'
+      path: '/api/public/website-enquiry'
+      fullPath: '/api/public/website-enquiry'
+      preLoaderRoute: typeof ApiPublicWebsiteEnquiryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -379,6 +399,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiPublicWebsiteEnquiryRoute: ApiPublicWebsiteEnquiryRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
