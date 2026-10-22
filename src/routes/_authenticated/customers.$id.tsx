@@ -164,7 +164,7 @@ function Messages({ customer, messages, canSend, onChange }: { customer: Row; me
   const [channel, setChannel] = useState("sms");
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
-  const effective = body || (template !== "custom" ? MESSAGE_TEMPLATES[template].body(customer) : "");
+  const effective = body || (template !== "custom" ? (MESSAGE_TEMPLATES[template]?.body(customer) ?? "") : "");
 
   async function queue() {
     if (!effective.trim()) { toast.error("Write or select a message first."); return; }
