@@ -36,7 +36,7 @@ function CustomerPage() {
   const q = useQuery({
     queryKey: ["customer", id],
     queryFn: async () => {
-      const [c, jobs, payments, files] = await Promise.all([
+      const [c, jobs, payments, files, messages] = await Promise.all([
         unwrap(supabase.from("customers").select("*, customer_types(name)").eq("id", id).single()),
         unwrap(supabase.from("jobs").select("id, job_number, title, status, payment_status, total, amount_paid, due_date, created_at").eq("customer_id", id).order("created_at", { ascending: false })),
         canMoney ? unwrap(supabase.from("payments").select("id, receipt_number, amount, method, status, paid_at, reference, jobs(job_number)").eq("customer_id", id).order("paid_at", { ascending: false })) : Promise.resolve([]),
@@ -49,7 +49,7 @@ function CustomerPage() {
 
   if (q.isLoading) return <LoadingRow />;
   if (q.error || !q.data) return <ErrorNote message="Customer not found or you don't have access." />;
-  const { c, jobs, payments, files } = q.data;
+  const { c, jobs, payments, files, messages } = q.data;
   const live = jobs.filter((j) => j.status !== "cancelled");
   const billed = live.reduce((s, j) => s + Number(j.total), 0);
   const paid = live.reduce((s, j) => s + Number(j.amount_paid), 0);
@@ -83,6 +83,7 @@ function CustomerPage() {
           { value: "jobs", label: "Jobs" },
           ...(canMoney ? [{ value: "payments" as Tab, label: "Payments" }, { value: "statement" as Tab, label: "Statement" }] : []),
           { value: "files", label: "Files & notes" },
+          { value: "messages", label: "Messages" },
           { value: "profile", label: "Profile" },
         ]}
       />
