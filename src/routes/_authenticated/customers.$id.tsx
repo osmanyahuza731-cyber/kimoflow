@@ -9,7 +9,7 @@ import { unwrap } from "@/lib/queries";
 import { ACCEPT, errMsg, openFile, run, uploadFile } from "@/lib/actions";
 import { money, shortDate, titleCase } from "@/lib/format";
 import { JOB_STATUS_LABELS, JOB_STATUS_TONE, PAYMENT_STATUS_TONE, type JobStatus } from "@/lib/workflow";
-import { Btn, Field, Input, Tabs, Textarea } from "@/components/forms";
+import { Btn, Field, Input, Select, Tabs, Textarea } from "@/components/forms";
 import { EmptyState, ErrorNote, LoadingRow, MetricTile, PageHeader, Panel, StatusBadge, TableShell, Td, Th } from "@/components/ui-kit";
 
 export const Route = createFileRoute("/_authenticated/customers/$id")({
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/_authenticated/customers/$id")({
   component: CustomerPage,
 });
 
-type Tab = "jobs" | "payments" | "statement" | "files" | "profile";
+type Tab = "jobs" | "payments" | "statement" | "files" | "messages" | "profile";
 
 function CustomerPage() {
   const { id } = Route.useParams();
@@ -41,8 +41,9 @@ function CustomerPage() {
         unwrap(supabase.from("jobs").select("id, job_number, title, status, payment_status, total, amount_paid, due_date, created_at").eq("customer_id", id).order("created_at", { ascending: false })),
         canMoney ? unwrap(supabase.from("payments").select("id, receipt_number, amount, method, status, paid_at, reference, jobs(job_number)").eq("customer_id", id).order("paid_at", { ascending: false })) : Promise.resolve([]),
         unwrap(supabase.from("attachments").select("*").eq("record_type", "customer").eq("record_id", id).order("created_at", { ascending: false })),
+        unwrap(supabase.from("customer_messages").select("*").eq("customer_id", id).order("created_at", { ascending: false }).limit(50)),
       ]);
-      return { c, jobs, payments, files };
+      return { c, jobs, payments, files, messages };
     },
   });
 
