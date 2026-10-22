@@ -125,6 +125,7 @@ function CustomerPage() {
       ) : null}
       {tab === "statement" ? <Statement customer={c} jobs={live} payments={payments.filter((p) => p.status === "confirmed")} /> : null}
       {tab === "files" ? <Files id={id} files={files} notes={c.notes} canEdit={!!user?.can("customers.manage")} onChange={() => qc.invalidateQueries({ queryKey: ["customer", id] })} /> : null}
+      {tab === "messages" ? <Messages customer={c} messages={messages} canSend={!!user?.can("customers.manage")} onChange={() => qc.invalidateQueries({ queryKey: ["customer", id] })} /> : null}
       {tab === "profile" ? <Profile c={c} canEdit={!!user?.can("customers.manage")} canCredit={!!user?.isAdmin} onChange={() => qc.invalidateQueries({ queryKey: ["customer", id] })} /> : null}
     </>
   );
