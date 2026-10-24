@@ -1,3 +1,4 @@
+import { BrandMark } from "@/components/brand-logo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -245,7 +246,7 @@ function PrintDoc({ kind, job, items, mats, company, onClose }: { kind: Exclude<
       <div className="mb-4 flex gap-2 print:hidden"><Btn variant="secondary" onClick={onClose}>Back to job</Btn><Btn onClick={() => window.print()}>Print / save as PDF</Btn></div>
       <article className="print-area mx-auto max-w-3xl border border-border bg-surface p-8 text-sm">
         <header className="flex items-start justify-between border-b-2 border-foreground pb-4">
-          <div><p className="font-display text-xl font-bold tracking-wider">{company.name || "KIMO GRAPHYX"}</p><p className="text-xs text-muted-foreground">{[company.address, company.phone, company.email, company.website].filter(Boolean).join(" · ")}</p></div>
+          <div className="flex items-center gap-3"><BrandMark className="h-10" /><div><p className="font-display text-xl font-bold tracking-wider">{company.name || "KIMO GRAPHYX"}</p><p className="text-xs text-muted-foreground">{[company.address, company.phone, company.email, company.website].filter(Boolean).join(" · ")}</p></div>
           <div className="text-right"><p className="font-display text-lg font-semibold">{title}</p><p className="tabular">{job.job_number}</p><p className="text-xs">{shortDate(new Date())}</p></div>
         </header>
         <section className="my-4 grid grid-cols-2 gap-4">
