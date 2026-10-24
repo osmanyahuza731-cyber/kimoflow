@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ErrorNote } from "@/components/ui-kit";
+import { BrandLockup } from "@/components/brand-logo";
+import printFloor from "@/assets/print-floor.jpg";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -64,27 +66,35 @@ function AuthPage() {
   }
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-[1fr_480px]">
-      <aside className="hidden flex-col justify-between bg-sidebar p-10 text-sidebar-foreground lg:flex">
-        <div className="flex items-center gap-3">
-          <div className="grid size-9 place-items-center rounded-sm bg-accent font-display font-bold text-accent-foreground">
-            KG
+    <div className="dark grid min-h-screen bg-background text-foreground lg:grid-cols-[1fr_480px]">
+      <aside className="relative hidden overflow-hidden lg:block">
+        <img src={printFloor} alt="" width={1280} height={1440} className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-background/80" aria-hidden />
+        <div className="relative flex h-full flex-col justify-between p-10 xl:p-14">
+          <BrandLockup />
+          <div className="max-w-xl">
+            <span className="inline-block rounded-full border border-brand-purple/50 bg-brand-purple/15 px-3 py-1 text-sm font-medium text-brand-purple">
+              #1 Printing Press in Buipe, Ghana
+            </span>
+            <p className="mt-5 font-display text-sm font-bold tracking-[0.12em] text-primary">✦ YOUR BEST CHOICE ✦</p>
+            <p className="mt-3 font-display text-4xl font-bold leading-[1.1] xl:text-5xl">
+              Designs That <span className="text-primary">Sell.</span>
+              <br />
+              Prints That <span className="text-brand-purple">Impress.</span>
+            </p>
+            <p className="mt-5 max-w-md text-base text-muted-foreground">
+              The KIMO GRAPHYX workspace — jobs, payments, stock and machines in one record for the whole shop floor.
+            </p>
           </div>
-          <span className="font-display text-lg font-semibold tracking-wide">KIMO GRAPHYX</span>
+          <p className="text-xs text-muted-foreground">Authorised staff only. All activity is logged.</p>
         </div>
-        <div className="max-w-md">
-          <p className="font-display text-2xl font-semibold leading-snug">
-            Jobs, payments, stock and machines — one record for the whole shop floor.
-          </p>
-          <p className="mt-3 text-sm opacity-70">Printing • Branding • Creative Production</p>
-        </div>
-        <p className="text-xs opacity-50">Authorised staff only. All activity is logged.</p>
       </aside>
 
-      <main className="flex items-center justify-center px-5 py-10">
+      <main className="flex items-center justify-center border-l border-border bg-surface px-5 py-10">
         <form onSubmit={submit} className="w-full max-w-sm space-y-4">
+          <BrandLockup className="mb-8 lg:hidden" />
           <div>
-            <h1 className="font-display text-xl font-semibold">
+            <h1 className="font-display text-2xl font-bold">
               {mode === "signin" ? "Staff sign in" : "Create staff account"}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
