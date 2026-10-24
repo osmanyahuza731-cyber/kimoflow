@@ -11,7 +11,7 @@ const TONE_CLASS: Record<ToneKey, string> = {
   warning: "bg-warning/15 text-warning-foreground border-warning/35",
   success: "bg-success/12 text-success border-success/30",
   danger: "bg-destructive/10 text-destructive border-destructive/25",
-  accent: "bg-accent/15 text-accent-foreground border-accent/35",
+  accent: "bg-brand-purple/10 text-brand-purple border-brand-purple/30",
 };
 
 export function StatusBadge({

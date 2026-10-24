@@ -239,7 +239,7 @@ function Files({ id, files, notes, canEdit, onChange }: { id: string; files: Row
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <Panel title="Files" actions={canEdit ? (
-        <label className="cursor-pointer text-sm font-medium text-accent-foreground underline">
+        <label className="cursor-pointer text-sm font-medium text-primary underline">
           {busy ? "Uploading…" : "Upload file"}
           <input type="file" accept={ACCEPT} className="sr-only" disabled={busy} onChange={async (e) => {
             const f = e.target.files?.[0]; if (!f) return; setBusy(true);

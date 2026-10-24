@@ -1,3 +1,4 @@
+import { BrandMark } from "@/components/brand-logo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 
@@ -48,7 +49,8 @@ function Receipt() {
         <Btn onClick={() => window.print()}>Print / save as PDF</Btn>
       </div>
       <article className="print-area mx-auto max-w-md border border-border bg-surface p-6 text-sm">
-        <header className="border-b-2 border-foreground pb-3 text-center">
+        <header className="border-b-2 border-primary pb-3 text-center">
+          <BrandMark className="mx-auto mb-1 h-10" />
           <p className="font-display text-lg font-bold tracking-wider">{c.name || "KIMO GRAPHYX"}</p>
           <p className="text-xs text-muted-foreground">{[c.address, c.phone, c.email].filter(Boolean).join(" · ")}</p>
           <p className="mt-2 font-display font-semibold">OFFICIAL RECEIPT</p>

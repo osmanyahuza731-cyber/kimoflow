@@ -23,6 +23,7 @@ import { initials } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { LoadingRow } from "@/components/ui-kit";
 import { NotificationBell } from "@/components/notification-bell";
+import { BrandLockup, BrandMark } from "@/components/brand-logo";
 
 type NavItem = { to: string; label: string; icon: typeof Users; perm?: Permission };
 
@@ -67,7 +68,7 @@ export function AppShell() {
             className={cn(
               "flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium transition-colors",
               active
-                ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-[inset_3px_0_0_var(--accent)]"
+                ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-[inset_3px_0_0_var(--primary)]"
                 : "text-sidebar-foreground/75 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
             )}
           >
@@ -80,11 +81,8 @@ export function AppShell() {
   );
 
   const brand = (
-    <div className="flex h-14 items-center gap-2.5 border-b border-sidebar-border px-4">
-      <div className="grid size-7 place-items-center rounded-sm bg-accent font-display text-xs font-bold text-accent-foreground">
-        KG
-      </div>
-      <span className="font-display text-sm font-semibold tracking-wider">KIMO GRAPHYX</span>
+    <div className="dark flex h-16 items-center border-b border-sidebar-border px-4 text-sidebar-accent-foreground">
+      <BrandLockup compact />
     </div>
   );
 
@@ -140,11 +138,12 @@ export function AppShell() {
       ) : null}
 
       <div className="min-w-0">
-        <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-border bg-surface px-4 lg:hidden">
-          <button onClick={() => setOpen(true)} className="rounded-sm p-2 hover:bg-muted" aria-label="Open menu">
+        <header className="dark sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-sidebar-border bg-sidebar px-4 text-sidebar-foreground lg:hidden">
+          <button onClick={() => setOpen(true)} className="rounded-sm p-2 hover:bg-sidebar-accent" aria-label="Open menu">
             <Menu className="size-5" />
           </button>
-          <span className="font-display text-sm font-semibold tracking-wider">KIMO GRAPHYX</span>
+          <BrandMark className="h-6" />
+          <span className="font-display text-sm font-bold tracking-wide text-sidebar-accent-foreground">KIMO GRAPHYX</span>
           <span className="ml-auto"><NotificationBell /></span>
         </header>
         <main className="mx-auto max-w-[1400px] px-4 py-5 sm:px-6 lg:py-7">
