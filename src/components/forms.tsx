@@ -54,7 +54,7 @@ export function Textarea({ className, ...props }: ComponentProps<"textarea">) {
 type BtnVariant = "primary" | "secondary" | "ghost" | "danger" | "accent";
 const BTN: Record<BtnVariant, string> = {
   primary: "bg-primary text-primary-foreground hover:bg-primary/90",
-  accent: "bg-accent text-accent-foreground hover:bg-accent/90",
+  accent: "bg-brand-purple text-brand-purple-foreground hover:bg-brand-purple/90",
   secondary: "border border-border bg-surface hover:bg-muted",
   ghost: "hover:bg-muted",
   danger: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
