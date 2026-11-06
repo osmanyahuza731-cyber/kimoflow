@@ -7,7 +7,7 @@
 - [x] Type-check clean; smoke-tested all 9 modules signed in; verified job approve → record payment → confirm → receipt → balance update
 
 ## Remaining
-- [ ] Restyle app to match kimographyxgh.com: logo, dark charcoal + orange + purple, fonts (sign-in page and app shell)
+- [x] Restyle app to match kimographyxgh.com: logo, dark charcoal + orange + purple, fonts (sign-in page and app shell)
 - [ ] Notifications (internal system) — not built
 - [ ] Customer messaging layer (no provider configured) — not built
 - [ ] Website lead webhook for kimographyxgh.com — not built
