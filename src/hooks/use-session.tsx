@@ -59,7 +59,7 @@ export function useCurrentUser() {
     enabled: Boolean(userId),
     queryFn: async () => {
       const [{ data: profile, error: pErr }, { data: roles, error: rErr }] = await Promise.all([
-        supabase.from("profiles").select("*").eq("id", userId!).maybeSingle(),
+        supabase.rpc("get_private_profiles").eq("id", userId!).maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", userId!),
       ]);
       if (pErr) throw pErr;

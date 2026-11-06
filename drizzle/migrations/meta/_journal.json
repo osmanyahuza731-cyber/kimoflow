@@ -8,6 +8,13 @@
       "when": 1792690977240,
       "tag": "0000_notification_triggers",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793979488677,
+      "tag": "0001_tighten_update_checks_and_staff_privacy",
+      "breakpoints": true
     }
   ]
 }
