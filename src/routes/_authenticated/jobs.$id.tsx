@@ -103,7 +103,7 @@ function JobPage() {
                   trigger={(o) => <Btn variant={to === "cancelled" ? "danger" : "secondary"} onClick={o}>{JOB_STATUS_LABELS[to]}</Btn>} />
               ) : (
                 <ConfirmAction key={to} title={`Move to ${JOB_STATUS_LABELS[to]}?`} message={to === "in_production" ? "Required materials will be deducted from stock." : "This change is recorded in the job history."} confirmLabel="Move" onConfirm={() => move(to)}
-                  trigger={(o) => <Btn variant={to === "approved" || to === "completed" ? "accent" : "primary"} onClick={o}>{JOB_STATUS_LABELS[to]}</Btn>} />
+                  trigger={(o) => <Btn variant={to === "approved" || to === "completed" ? "accent" : "primary"} onClick={o} disabled={to === "in_production" && shortages.length > 0}>{JOB_STATUS_LABELS[to]}</Btn>} />
               ),
             )}
           </div>
