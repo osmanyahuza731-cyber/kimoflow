@@ -1802,6 +1802,31 @@ export type Database = {
         Returns: Json
       }
       confirm_payment: { Args: { _payment_id: string }; Returns: string }
+      get_private_profiles: {
+        Args: never
+        Returns: {
+          avatar_url: string | null
+          created_at: string
+          department: string | null
+          email: string | null
+          emergency_contact: string | null
+          employment_status: string
+          full_name: string
+          id: string
+          is_active: boolean
+          notes: string | null
+          phone: string | null
+          position: string | null
+          start_date: string | null
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       has_any_role: {
         Args: {
           _roles: Database["public"]["Enums"]["app_role"][]
