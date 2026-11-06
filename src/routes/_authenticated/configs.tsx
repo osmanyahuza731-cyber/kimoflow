@@ -222,7 +222,7 @@ function Users() {
     queryKey: ["users-roles"],
     queryFn: async () => {
       const [profiles, roles] = await Promise.all([
-        unwrap(supabase.from("profiles").select("*").order("full_name")),
+        unwrap(supabase.rpc("get_private_profiles")),
         unwrap(supabase.from("user_roles").select("user_id, role")),
       ]);
       return profiles.map((p) => ({ ...p, roles: roles.filter((r) => r.user_id === p.id).map((r) => r.role as AppRole) }));
